@@ -1,0 +1,121 @@
+/* Custom styles for Coffee Shop Finder */
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.text-primary {
+    color: #8B4513 !important;
+}
+
+.btn-primary {
+    background-color: #8B4513;
+    border-color: #8B4513;
+}
+
+.btn-primary:hover {
+    background-color: #654321;
+    border-color: #654321;
+}
+
+.coffee-shop-card {
+    cursor: pointer;
+    border-left: 4px solid #8B4513;
+}
+
+.coffee-shop-card.selected {
+    border-left: 4px solid #28a745;
+    background-color: #f8fff9;
+}
+
+.rating-stars {
+    color: #ffc107;
+}
+
+.shop-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.shop-address {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.signature-drink {
+    background: linear-gradient(135deg, #8B4513, #A0522D);
+    color: white;
+    font-weight: 500;
+}
+
+/* Map marker custom styles */
+.custom-marker {
+    background: #8B4513;
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* Loading animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #8B4513;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #map {
+        height: 300px;
+        margin-bottom: 20px;
+    }
+    
+    .search-container {
+        margin-bottom: 15px;
+    }
+}
+
+/* Modal custom styles */
+.modal-header {
+    background-color: #8B4513;
+    color: white;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+.review-item {
+    border-left: 3px solid #8B4513;
+    padding-left: 15px;
+    margin-bottom: 15px;
+}
+
+.review-user {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.review-comment {
+    color: #6c757d;
+    font-style: italic;
+} 
