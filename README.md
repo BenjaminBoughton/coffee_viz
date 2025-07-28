@@ -1,40 +1,29 @@
-# Coffee Shop Finder - Honolulu
+# Coffee Shop Finder - Dynamic Discovery
 
-A web application that maps coffee shops in Honolulu with reviews and signature drinks. Built with Flask, Leaflet.js, and Bootstrap.
+A web application that dynamically finds coffee shops near any location using real-time APIs. Built with Flask, Leaflet.js, and Yelp API.
 
 ## Features
 
+- **Dynamic Coffee Shop Discovery**: Find real coffee shops near any zip code or location
 - **Interactive Map**: View coffee shops on an interactive map using Leaflet.js
-- **Search by Zip Code**: Find coffee shops in specific zip codes (currently focused on Honolulu 96814)
-- **Shop Details**: View detailed information including signature drinks, ratings, and reviews
-- **Filtering**: Filter shops by rating (4.5+ stars)
+- **Radius Search**: Search within 1-15 miles of any location
+- **Real-time Data**: Uses Yelp API for live business information
+- **Rating Filtering**: Filter shops by rating (4.5+ stars)
 - **Responsive Design**: Works on desktop and mobile devices
 
-## Project Structure
+## How It Works
 
-```
-coffee_viz/
-├── app.py                 # Main Flask application
-├── requirements.txt       # Python dependencies
-├── app/
-│   ├── static/
-│   │   ├── css/
-│   │   │   └── style.css # Custom styles
-│   │   └── js/
-│   │       └── app.js    # Frontend JavaScript
-│   └── templates/
-│       └── index.html    # Main HTML template
-├── api/
-│   ├── routes/           # API route handlers
-│   └── services/         # Business logic services
-└── data/                 # Data files
-```
+1. **Enter a Zip Code**: Type any US zip code (e.g., 96814 for Honolulu)
+2. **Set Search Radius**: Choose how far to search (1-15 miles)
+3. **Get Real Results**: App finds actual coffee shops in that area
+4. **View Details**: See ratings, reviews, hours, and contact info
 
 ## Setup Instructions
 
 ### Prerequisites
 - Python 3.7 or higher
 - pip (Python package installer)
+- Yelp API key (free tier available)
 
 ### Installation
 
@@ -49,29 +38,51 @@ coffee_viz/
    pip install -r requirements.txt
    ```
 
-3. **Run the application**
+3. **Get Yelp API Key**
+   - Go to [Yelp Developers](https://www.yelp.com/developers)
+   - Create a free account
+   - Create a new app to get your API key
+
+4. **Set up environment variables**
+   ```bash
+   cp env_example.txt .env
+   # Edit .env and add your Yelp API key
+   ```
+
+5. **Run the application**
    ```bash
    python app.py
    ```
 
-4. **Open your browser**
-   Navigate to `http://localhost:5000`
+6. **Open your browser**
+   Navigate to `http://localhost:8000`
 
-## Current Coffee Shops (Phase 1)
+## API Integration
 
-The application currently includes sample data for popular Honolulu coffee shops:
+### Yelp API
+- **Purpose**: Find real coffee shops with ratings, reviews, and business info
+- **Cost**: Free tier available (500 requests/day)
+- **Data**: Business details, ratings, reviews, hours, photos
 
-- **Honolulu Coffee Company** - Hawaiian Latte
-- **Island Vintage Coffee** - Island Mocha  
-- **Morning Glass Coffee** - Manu Manu
-- **The Curb Kaimuki** - Kaimuki Cold Brew
-- **Coffee Gallery** - Gallery Blend
+### Geocoding
+- **Service**: OpenStreetMap Nominatim (free)
+- **Purpose**: Convert zip codes to coordinates
+- **Usage**: Automatic when searching by zip code
+
+## Example Searches
+
+Try these zip codes to test the app:
+- **96814** (Honolulu) - Should find Try Coffee and others
+- **10001** (New York) - Manhattan coffee shops
+- **90210** (Beverly Hills) - LA coffee scene
+- **94102** (San Francisco) - SF coffee culture
 
 ## API Endpoints
 
-- `GET /` - Main application page
-- `GET /api/coffee-shops?zip_code=96814` - Get coffee shops by zip code
-- `GET /api/coffee-shop/<id>` - Get detailed information about a specific shop
+- `GET /api/coffee-shops?zip_code=96814&radius=5` - Get coffee shops by zip code
+- `GET /api/coffee-shops?lat=21.3069&lng=-157.8583&radius=5` - Get shops by coordinates
+- `GET /api/search?q=Honolulu` - Search by location name
+- `GET /api/nearby?lat=21.3069&lng=-157.8583&radius=5` - Find shops near coordinates
 
 ## Technologies Used
 
@@ -79,27 +90,28 @@ The application currently includes sample data for popular Honolulu coffee shops
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Map**: Leaflet.js with OpenStreetMap
 - **Styling**: Bootstrap 5
-- **Data**: Static JSON data (Phase 1)
+- **APIs**: Yelp API, OpenStreetMap Geocoding
+- **Data**: Real-time business data
 
 ## Development Phases
 
-### Phase 1: Basic Map with Static Data ✅
-- [x] Flask application setup
-- [x] Interactive map with Leaflet.js
-- [x] Sample coffee shop data for Honolulu
-- [x] Basic search and filtering functionality
+### Phase 1: Dynamic Discovery ✅
+- [x] Yelp API integration
+- [x] Zip code to coordinates conversion
+- [x] Radius-based search
+- [x] Real coffee shop data
 
-### Phase 2: API Integration (Planned)
-- [ ] Integrate Yelp API for real coffee shop data
-- [ ] Implement actual zip code filtering
-- [ ] Add real-time reviews and ratings
-
-### Phase 3: Enhanced Features (Planned)
-- [ ] User authentication
+### Phase 2: Enhanced Features (Planned)
 - [ ] User reviews and ratings
 - [ ] Photo galleries
 - [ ] Directions and routing
-- [ ] Advanced filtering options
+- [ ] Advanced filtering (price, amenities)
+- [ ] Save favorite locations
+
+### Phase 3: Mobile App (Planned)
+- [ ] React Native mobile app
+- [ ] GPS location detection
+- [ ] Push notifications for nearby shops
 
 ## Contributing
 

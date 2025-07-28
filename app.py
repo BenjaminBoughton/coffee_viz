@@ -2,23 +2,15 @@ from flask import Flask, render_template, jsonify, request
 import json
 import os
 from dotenv import load_dotenv
-from services.database_service import CoffeeShopDatabaseService
+from services.yelp_service import YelpCoffeeShopService
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 
-# Initialize database service
-db_service = CoffeeShopDatabaseService()
-
-# Populate with Hawaii data on first run
-@app.before_first_request
-def initialize_data():
-    """Initialize database with Hawaii data if empty"""
-    stats = db_service.get_statistics()
-    if stats['total_shops'] == 0:
-        db_service.populate_hawaii_data()
+# Initialize Yelp service
+yelp_service = YelpCoffeeShopService()
 
 @app.route('/')
 def index():
@@ -27,24 +19,23 @@ def index():
 
 @app.route('/api/coffee-shops')
 def get_coffee_shops():
-    """API endpoint to get coffee shops data"""
+    """API endpoint to get coffee shops data dynamically"""
     zip_code = request.args.get('zip_code', '')
-    city = request.args.get('city', '')
-    state = request.args.get('state', 'HI')  # Default to Hawaii for POC
+    lat = request.args.get('lat', type=float)
+    lng = request.args.get('lng', type=float)
+    radius_miles = request.args.get('radius', 5, type=int)
     min_rating = request.args.get('min_rating', 0.0, type=float)
-    search_query = request.args.get('search', '')
     
-    # Get shops based on filters
-    if search_query:
-        shops = db_service.search_shops(search_query)
-    elif city:
-        shops = db_service.get_shops_by_city(city)
+    # Get shops based on location
+    if lat and lng:
+        # Search by coordinates
+        shops = yelp_service.get_coffee_shops_by_location(lat, lng, radius_miles)
     elif zip_code:
-        shops = db_service.get_shops_by_zip(zip_code)
-    elif state:
-        shops = db_service.get_shops_by_state(state)
+        # Search by zip code
+        shops = yelp_service.get_coffee_shops_by_zip(zip_code, radius_miles)
     else:
-        shops = db_service.get_all_shops()
+        # Default to Honolulu area if no location specified
+        shops = yelp_service.get_coffee_shops_by_location(21.3069, -157.8583, radius_miles)
     
     # Apply rating filter
     if min_rating > 0:
@@ -52,53 +43,54 @@ def get_coffee_shops():
     
     return jsonify({
         'zip_code': zip_code,
-        'city': city,
-        'state': state,
+        'lat': lat,
+        'lng': lng,
+        'radius_miles': radius_miles,
         'min_rating': min_rating,
-        'search_query': search_query,
         'coffee_shops': shops,
         'total_count': len(shops)
     })
 
-@app.route('/api/coffee-shop/<int:shop_id>')
+@app.route('/api/coffee-shop/<shop_id>')
 def get_coffee_shop_detail(shop_id):
     """API endpoint to get detailed information about a specific coffee shop"""
-    shop = db_service.get_shop_by_id(shop_id)
-    
-    if shop:
-        # Add sample reviews (in Phase 2, these would come from a real API)
-        shop['reviews'] = [
-            {'user': 'CoffeeLover', 'rating': 5, 'comment': 'Amazing signature drinks!'},
-            {'user': 'LocalGuy', 'rating': 4, 'comment': 'Great atmosphere and friendly staff.'},
-            {'user': 'Tourist123', 'rating': 5, 'comment': 'Best coffee I had in Hawaii!'}
+    # For now, return basic info. In Phase 2, we'd fetch from Yelp API
+    return jsonify({
+        'id': shop_id,
+        'name': 'Coffee Shop Details',
+        'description': 'Detailed information would be fetched from Yelp API',
+        'reviews': [
+            {'user': 'CoffeeLover', 'rating': 5, 'comment': 'Great coffee!'},
+            {'user': 'LocalGuy', 'rating': 4, 'comment': 'Nice atmosphere.'}
         ]
-        return jsonify(shop)
-    else:
-        return jsonify({'error': 'Coffee shop not found'}), 404
-
-@app.route('/api/statistics')
-def get_statistics():
-    """API endpoint to get coffee shop statistics"""
-    stats = db_service.get_statistics()
-    return jsonify(stats)
-
-@app.route('/api/states')
-def get_states():
-    """API endpoint to get available states"""
-    # For POC, focus on Hawaii but structure supports expansion
-    states = [
-        {'code': 'HI', 'name': 'Hawaii', 'cities': ['Honolulu', 'Kailua-Kona', 'Kahului']}
-    ]
-    return jsonify(states)
+    })
 
 @app.route('/api/search')
 def search_coffee_shops():
-    """API endpoint to search coffee shops"""
+    """API endpoint to search coffee shops by location"""
     query = request.args.get('q', '')
     if not query:
         return jsonify({'coffee_shops': [], 'total_count': 0})
     
-    shops = db_service.search_shops(query)
+    # Try to interpret query as zip code or location
+    try:
+        # If it looks like a zip code, search by zip
+        if query.isdigit() and len(query) == 5:
+            shops = yelp_service.get_coffee_shops_by_zip(query)
+        else:
+            # Otherwise, try to geocode the query
+            from geopy.geocoders import Nominatim
+            geolocator = Nominatim(user_agent="coffee_shop_finder")
+            location = geolocator.geocode(f"{query}, USA")
+            
+            if location:
+                shops = yelp_service.get_coffee_shops_by_location(location.latitude, location.longitude)
+            else:
+                shops = []
+    except Exception as e:
+        print(f"Search error: {e}")
+        shops = []
+    
     return jsonify({
         'query': query,
         'coffee_shops': shops,
@@ -110,12 +102,12 @@ def get_nearby_shops():
     """API endpoint to get shops near a location"""
     lat = request.args.get('lat', type=float)
     lng = request.args.get('lng', type=float)
-    radius = request.args.get('radius', 10.0, type=float)
+    radius = request.args.get('radius', 5, type=int)
     
     if lat is None or lng is None:
         return jsonify({'error': 'Latitude and longitude required'}), 400
     
-    shops = db_service.get_shops_near_location(lat, lng, radius)
+    shops = yelp_service.get_coffee_shops_by_location(lat, lng, radius)
     return jsonify({
         'lat': lat,
         'lng': lng,

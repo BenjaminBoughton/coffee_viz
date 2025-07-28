@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize Leaflet map
 function initializeMap() {
-    // Honolulu coordinates (96814 area)
+    // Honolulu coordinates (centered on actual coffee shop locations)
     const honoluluCoords = [21.3069, -157.8583];
     
     // Create map
@@ -26,7 +26,7 @@ function initializeMap() {
     // Add a marker for the search area
     L.marker(honoluluCoords)
         .addTo(map)
-        .bindPopup('<b>Honolulu (96814)</b><br>Search area for coffee shops')
+        .bindPopup('<b>Honolulu Coffee Area</b><br>Search for coffee shops')
         .openPopup();
 }
 
@@ -34,12 +34,35 @@ function initializeMap() {
 async function loadCoffeeShops() {
     try {
         const zipCode = document.getElementById('zipCode').value;
-        const response = await fetch(`/api/coffee-shops?zip_code=${zipCode}`);
+        console.log('Loading coffee shops for zip code:', zipCode);
+        
+        let url = `/api/coffee-shops`;
+        if (zipCode && zipCode.trim() !== '') {
+            url += `?zip_code=${zipCode}`;
+        }
+        
+        const response = await fetch(url);
         const data = await response.json();
         
-        coffeeShops = data.coffee_shops;
+        console.log('API response:', data);
+        console.log('Coffee shops found:', data.coffee_shops ? data.coffee_shops.length : 0);
+        
+        coffeeShops = data.coffee_shops || [];
+        
+        // If no shops found for zip code, try loading all shops
+        if (coffeeShops.length === 0 && zipCode && zipCode.trim() !== '') {
+            console.log('No shops found for zip code, loading all shops...');
+            const allResponse = await fetch('/api/coffee-shops');
+            const allData = await allResponse.json();
+            coffeeShops = allData.coffee_shops || [];
+            console.log('All shops loaded:', coffeeShops.length);
+        }
+        
         displayCoffeeShops();
         addMarkersToMap();
+        
+        // Center map on the search results
+        centerMapOnResults();
         
     } catch (error) {
         console.error('Error loading coffee shops:', error);
@@ -106,6 +129,25 @@ function addMarkersToMap() {
         
         markers.push(marker);
     });
+}
+
+// Center map on search results
+function centerMapOnResults() {
+    if (coffeeShops.length === 0) {
+        // If no results, center on a default location (Honolulu)
+        map.setView([21.3069, -157.8583], 10);
+        return;
+    }
+    
+    // If we have results, fit the map to show all markers
+    if (markers.length > 0) {
+        const group = new L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.1)); // Add 10% padding
+    } else if (coffeeShops.length === 1) {
+        // If only one result, center on it with zoom
+        const shop = coffeeShops[0];
+        map.setView([shop.lat, shop.lng], 14);
+    }
 }
 
 // Select a coffee shop
