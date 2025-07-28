@@ -1,0 +1,16 @@
+id,name,address,city,zip_code,lat,lng,signature_drink,rating,description,phone,hours,website
+1,Honolulu Coffee Company,1000 Bishop St,Honolulu,96813,21.3069,-157.8583,Hawaiian Latte,4.5,Premium coffee with Hawaiian flavors,(808) 555-0101,7:00 AM - 6:00 PM,https://honolulucoffee.com
+2,Island Vintage Coffee,2301 Kalakaua Ave,Honolulu,96815,21.2753,-157.8271,Island Mocha,4.7,Organic coffee with island-inspired drinks,(808) 555-0102,6:00 AM - 8:00 PM,https://islandvintagecoffee.com
+3,Morning Glass Coffee,2957 E Manoa Rd,Honolulu,96822,21.2989,-157.8167,Manu Manu,4.6,Artisanal coffee in a relaxed atmosphere,(808) 555-0103,6:30 AM - 5:00 PM,https://morningglasscoffee.com
+4,The Curb Kaimuki,1045 Koko Head Ave,Honolulu,96816,21.2847,-157.8025,Kaimuki Cold Brew,4.4,Local favorite with great breakfast options,(808) 555-0104,7:00 AM - 4:00 PM,https://thecurbkaimuki.com
+5,Coffee Gallery,1132 Bishop St,Honolulu,96813,21.3075,-157.8589,Gallery Blend,4.3,Downtown coffee spot with art gallery,(808) 555-0105,6:00 AM - 7:00 PM,https://coffeegalleryhi.com
+6,Kai Coffee,2650 S King St,Honolulu,96826,21.2875,-157.8234,Kai Special,4.8,Local favorite with Hawaiian coffee beans,(808) 555-0106,6:00 AM - 6:00 PM,https://kaicoffee.com
+7,Arvo Coffee,675 Auahi St,Honolulu,96813,21.2912,-157.8567,Arvo Flat White,4.2,Australian-style coffee shop,(808) 555-0107,7:00 AM - 5:00 PM,https://arvocoffee.com
+8,Green World Coffee Farm,71-1010 Hawaii Belt Rd,Waimea,96743,19.9876,-155.6789,Green World Blend,4.6,Coffee farm with fresh roasted beans,(808) 555-0108,7:00 AM - 5:00 PM,https://greenworldcoffee.com
+9,Kona Coffee & Tea,74-5588 Palani Rd,Kailua-Kona,96740,19.6345,-155.9889,Kona Classic,4.9,Premium Kona coffee experience,(808) 555-0109,6:00 AM - 6:00 PM,https://konacoffeeandtea.com
+10,Hula Daddy Kona Coffee,74-4944 Mamalahoa Hwy,Holualoa,96725,19.6198,-155.9487,Hula Daddy Special,4.7,Award-winning Kona coffee,(808) 555-0110,8:00 AM - 4:00 PM,https://huladaddy.com
+11,Maui Coffee Roasters,444 Hana Hwy,Kahului,96732,20.8847,-156.4543,Maui Mokka,4.5,Local Maui coffee roaster,(808) 555-0111,6:00 AM - 6:00 PM,https://mauicoffeeroasters.com
+12,Bad Ass Coffee,1865 Main St,Wailuku,96793,20.8901,-156.5056,Bad Ass Blend,4.3,Strong coffee with attitude,(808) 555-0112,6:00 AM - 7:00 PM,https://badasscoffee.com
+13,Island Lava Java,75-5801 Ali'i Dr,Kailua-Kona,96740,19.6345,-155.9889,Lava Java,4.4,Oceanfront coffee experience,(808) 555-0113,6:00 AM - 8:00 PM,https://islandlavajava.com
+14,Kauai Coffee Company,870 Halewili Rd,Kalaheo,96741,21.9245,-159.5278,Kauai Estate,4.6,Largest coffee estate in Hawaii,(808) 555-0114,8:00 AM - 5:00 PM,https://kauaicoffee.com
+15,Java Kai,4-1384 Kuhio Hwy,Kapaa,96746,22.0756,-159.3190,Java Kai Special,4.5,Local Kauai coffee shop,(808) 555-0115,6:00 AM - 6:00 PM,https://javakai.com 

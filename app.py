@@ -2,65 +2,23 @@ from flask import Flask, render_template, jsonify, request
 import json
 import os
 from dotenv import load_dotenv
+from services.database_service import CoffeeShopDatabaseService
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 
-# Sample coffee shop data for Honolulu (96814)
-HONOLULU_COFFEE_SHOPS = [
-    {
-        "id": 1,
-        "name": "Honolulu Coffee Company",
-        "address": "1000 Bishop St, Honolulu, HI 96813",
-        "lat": 21.3069,
-        "lng": -157.8583,
-        "signature_drink": "Hawaiian Latte",
-        "rating": 4.5,
-        "description": "Premium coffee with Hawaiian flavors"
-    },
-    {
-        "id": 2,
-        "name": "Island Vintage Coffee",
-        "address": "2301 Kalakaua Ave, Honolulu, HI 96815",
-        "lat": 21.2753,
-        "lng": -157.8271,
-        "signature_drink": "Island Mocha",
-        "rating": 4.7,
-        "description": "Organic coffee with island-inspired drinks"
-    },
-    {
-        "id": 3,
-        "name": "Morning Glass Coffee",
-        "address": "2957 E Manoa Rd, Honolulu, HI 96822",
-        "lat": 21.2989,
-        "lng": -157.8167,
-        "signature_drink": "Manu Manu",
-        "rating": 4.6,
-        "description": "Artisanal coffee in a relaxed atmosphere"
-    },
-    {
-        "id": 4,
-        "name": "The Curb Kaimuki",
-        "address": "1045 Koko Head Ave, Honolulu, HI 96816",
-        "lat": 21.2847,
-        "lng": -157.8025,
-        "signature_drink": "Kaimuki Cold Brew",
-        "rating": 4.4,
-        "description": "Local favorite with great breakfast options"
-    },
-    {
-        "id": 5,
-        "name": "Coffee Gallery",
-        "address": "1132 Bishop St, Honolulu, HI 96813",
-        "lat": 21.3075,
-        "lng": -157.8589,
-        "signature_drink": "Gallery Blend",
-        "rating": 4.3,
-        "description": "Downtown coffee spot with art gallery"
-    }
-]
+# Initialize database service
+db_service = CoffeeShopDatabaseService()
+
+# Populate with Hawaii data on first run
+@app.before_first_request
+def initialize_data():
+    """Initialize database with Hawaii data if empty"""
+    stats = db_service.get_statistics()
+    if stats['total_shops'] == 0:
+        db_service.populate_hawaii_data()
 
 @app.route('/')
 def index():
@@ -70,35 +28,101 @@ def index():
 @app.route('/api/coffee-shops')
 def get_coffee_shops():
     """API endpoint to get coffee shops data"""
-    zip_code = request.args.get('zip_code', '96814')
+    zip_code = request.args.get('zip_code', '')
+    city = request.args.get('city', '')
+    state = request.args.get('state', 'HI')  # Default to Hawaii for POC
+    min_rating = request.args.get('min_rating', 0.0, type=float)
+    search_query = request.args.get('search', '')
     
-    # For now, return Honolulu data regardless of zip code
-    # In Phase 2, we'll implement actual zip code filtering
+    # Get shops based on filters
+    if search_query:
+        shops = db_service.search_shops(search_query)
+    elif city:
+        shops = db_service.get_shops_by_city(city)
+    elif zip_code:
+        shops = db_service.get_shops_by_zip(zip_code)
+    elif state:
+        shops = db_service.get_shops_by_state(state)
+    else:
+        shops = db_service.get_all_shops()
+    
+    # Apply rating filter
+    if min_rating > 0:
+        shops = [shop for shop in shops if shop.get('rating', 0) >= min_rating]
+    
     return jsonify({
         'zip_code': zip_code,
-        'coffee_shops': HONOLULU_COFFEE_SHOPS
+        'city': city,
+        'state': state,
+        'min_rating': min_rating,
+        'search_query': search_query,
+        'coffee_shops': shops,
+        'total_count': len(shops)
     })
 
 @app.route('/api/coffee-shop/<int:shop_id>')
 def get_coffee_shop_detail(shop_id):
     """API endpoint to get detailed information about a specific coffee shop"""
-    shop = next((shop for shop in HONOLULU_COFFEE_SHOPS if shop['id'] == shop_id), None)
+    shop = db_service.get_shop_by_id(shop_id)
     
     if shop:
-        # Add more detailed information
-        shop_detail = shop.copy()
-        shop_detail.update({
-            'hours': '7:00 AM - 6:00 PM',
-            'phone': '(808) 555-0123',
-            'website': 'https://example.com',
-            'reviews': [
-                {'user': 'CoffeeLover', 'rating': 5, 'comment': 'Amazing signature drinks!'},
-                {'user': 'LocalGuy', 'rating': 4, 'comment': 'Great atmosphere and friendly staff.'}
-            ]
-        })
-        return jsonify(shop_detail)
+        # Add sample reviews (in Phase 2, these would come from a real API)
+        shop['reviews'] = [
+            {'user': 'CoffeeLover', 'rating': 5, 'comment': 'Amazing signature drinks!'},
+            {'user': 'LocalGuy', 'rating': 4, 'comment': 'Great atmosphere and friendly staff.'},
+            {'user': 'Tourist123', 'rating': 5, 'comment': 'Best coffee I had in Hawaii!'}
+        ]
+        return jsonify(shop)
     else:
         return jsonify({'error': 'Coffee shop not found'}), 404
+
+@app.route('/api/statistics')
+def get_statistics():
+    """API endpoint to get coffee shop statistics"""
+    stats = db_service.get_statistics()
+    return jsonify(stats)
+
+@app.route('/api/states')
+def get_states():
+    """API endpoint to get available states"""
+    # For POC, focus on Hawaii but structure supports expansion
+    states = [
+        {'code': 'HI', 'name': 'Hawaii', 'cities': ['Honolulu', 'Kailua-Kona', 'Kahului']}
+    ]
+    return jsonify(states)
+
+@app.route('/api/search')
+def search_coffee_shops():
+    """API endpoint to search coffee shops"""
+    query = request.args.get('q', '')
+    if not query:
+        return jsonify({'coffee_shops': [], 'total_count': 0})
+    
+    shops = db_service.search_shops(query)
+    return jsonify({
+        'query': query,
+        'coffee_shops': shops,
+        'total_count': len(shops)
+    })
+
+@app.route('/api/nearby')
+def get_nearby_shops():
+    """API endpoint to get shops near a location"""
+    lat = request.args.get('lat', type=float)
+    lng = request.args.get('lng', type=float)
+    radius = request.args.get('radius', 10.0, type=float)
+    
+    if lat is None or lng is None:
+        return jsonify({'error': 'Latitude and longitude required'}), 400
+    
+    shops = db_service.get_shops_near_location(lat, lng, radius)
+    return jsonify({
+        'lat': lat,
+        'lng': lng,
+        'radius': radius,
+        'coffee_shops': shops,
+        'total_count': len(shops)
+    })
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000) 
