@@ -100,6 +100,7 @@ Try these zip codes to test the app:
 - [x] Zip code to coordinates conversion
 - [x] Radius-based search
 - [x] Real coffee shop data
+- [x] Signature drink analyzer (basic)
 
 ### Phase 2: Enhanced Features (Planned)
 - [ ] User reviews and ratings
@@ -112,6 +113,34 @@ Try these zip codes to test the app:
 - [ ] React Native mobile app
 - [ ] GPS location detection
 - [ ] Push notifications for nearby shops
+
+## TODO - Next Development Sprint
+
+### 1. Better Coffee Shop Filtering 🔍
+- [ ] Implement stricter filtering to show only dedicated coffee shops
+- [ ] Filter out restaurants, bakeries, and other businesses that happen to serve coffee
+- [ ] Focus on businesses with primary coffee/tea categories
+- [ ] Consider business name analysis for coffee-specific keywords
+
+### 2. Minimum Rating Threshold ⭐
+- [ ] Only show coffee shops with minimum 100 Yelp reviews
+- [ ] This ensures more reliable ratings and established businesses
+- [ ] Update search parameters to prioritize well-reviewed shops
+- [ ] Add review count display in the UI
+
+### 3. Replace Signature Drink with NLP Review Summary 📝
+- [ ] Remove signature drink analyzer (currently too generic)
+- [ ] Implement NLP analysis of Yelp reviews to generate shop summaries
+- [ ] Show top 5 coffee shops by rating in sidebar by default
+- [ ] Create intelligent summaries like: "Known for their artisanal pour-over coffee and friendly baristas. Popular for morning meetings and laptop work. Signature drinks include their house blend and seasonal specials."
+
+### 4. Aesthetic Improvements 🎨
+- [ ] Improve map styling and marker design
+- [ ] Better responsive design for mobile devices
+- [ ] Enhanced coffee shop cards with better typography
+- [ ] Add loading states and better error handling
+- [ ] Improve color scheme and overall visual appeal
+- [ ] Add coffee-themed icons and graphics
 
 ## Contributing
 
