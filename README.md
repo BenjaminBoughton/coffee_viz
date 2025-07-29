@@ -156,6 +156,14 @@ Try these zip codes to test the app:
 - [ ] Prioritize local results over distant matches
 - [ ] Add state/city context to improve geocoding accuracy
 
+### 7. Location Finder Overhaul 🔧 **HIGH PRIORITY**
+- [ ] **Fix geocoding accuracy** - zip codes like 99801 (Alaska) and 45242 (Cincinnati) are being geocoded to wrong countries
+- [ ] **Implement better geocoding service** - current Nominatim service is unreliable for US zip codes
+- [ ] **Add US-specific geocoding** - prioritize US locations and zip codes
+- [ ] **Add location validation** - verify coordinates are within reasonable US bounds
+- [ ] **Implement fallback geocoding** - try multiple services if primary fails
+- [ ] **Add location caching** - cache successful geocoding results to reduce API calls
+
 ## Contributing
 
 Feel free to contribute to this project by submitting issues or pull requests.
