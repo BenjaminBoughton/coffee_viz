@@ -32,12 +32,17 @@ def get_coffee_shops():
     if lat and lng:
         # Search by coordinates
         shops = yelp_service.get_coffee_shops_by_location(lat, lng, radius_miles)
+        search_lat, search_lng = lat, lng
     elif location_query:
         # Try to interpret as zip code or location name
         shops = yelp_service.get_coffee_shops_by_location_query(location_query, radius_miles)
+        # Get coordinates for the searched location
+        coords = yelp_service._location_to_coordinates(location_query)
+        search_lat, search_lng = coords if coords else (None, None)
     else:
         # Default to Honolulu area if no location specified
-        shops = yelp_service.get_coffee_shops_by_location(21.3069, -157.8583, radius_miles)
+        search_lat, search_lng = 21.3069, -157.8583
+        shops = yelp_service.get_coffee_shops_by_location(search_lat, search_lng, radius_miles)
     
     # Apply rating filter
     if min_rating > 0:
@@ -48,8 +53,8 @@ def get_coffee_shops():
     
     return jsonify({
         'location_query': location_query,
-        'lat': lat,
-        'lng': lng,
+        'lat': search_lat,
+        'lng': search_lng,
         'radius_miles': radius_miles,
         'min_rating': min_rating,
         'coffee_shops': shops,  # All shops for map markers

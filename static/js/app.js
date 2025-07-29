@@ -60,21 +60,12 @@ async function loadCoffeeShops() {
         
         coffeeShops = data.coffee_shops || [];
         
-        // If no shops found for zip code, try loading all shops
-        if (coffeeShops.length === 0 && zipCode && zipCode.trim() !== '') {
-            console.log('No shops found for zip code, loading all shops...');
-            const allResponse = await fetch('/api/coffee-shops');
-            const allData = await allResponse.json();
-            coffeeShops = allData.coffee_shops || [];
-            console.log('All shops loaded:', coffeeShops.length);
-        }
-        
         displayTopShops(data.top_shops || []);
         displayAllShopsSection(data.all_shops_count || 0);
         addMarkersToMap();
         
-        // Center map on the search results
-        centerMapOnResults();
+        // Center map on the search results using API coordinates
+        centerMapOnResults(data.lat, data.lng);
         
     } catch (error) {
         console.error('Error loading coffee shops:', error);
@@ -220,10 +211,15 @@ function addMarkersToMap() {
 }
 
 // Center map on search results
-function centerMapOnResults() {
+function centerMapOnResults(lat, lng) {
     if (coffeeShops.length === 0) {
-        // If no results, center on a default location (Honolulu)
-        map.setView([21.3069, -157.8583], 10);
+        // If no results, center on the searched location coordinates
+        if (lat && lng) {
+            map.setView([lat, lng], 10);
+        } else {
+            // Fallback to Honolulu if no coordinates provided
+            map.setView([21.3069, -157.8583], 10);
+        }
         return;
     }
     
