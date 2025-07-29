@@ -116,23 +116,23 @@ Try these zip codes to test the app:
 
 ## TODO - Next Development Sprint
 
-### 1. Better Coffee Shop Filtering 🔍
-- [ ] Implement stricter filtering to show only dedicated coffee shops
-- [ ] Filter out restaurants, bakeries, and other businesses that happen to serve coffee
-- [ ] Focus on businesses with primary coffee/tea categories
-- [ ] Consider business name analysis for coffee-specific keywords
+### 1. Better Coffee Shop Filtering 🔍 ✅ COMPLETED
+- [x] Implement stricter filtering to show only dedicated coffee shops
+- [x] Filter out restaurants, bakeries, and other businesses that happen to serve coffee
+- [x] Focus on businesses with primary coffee/tea categories
+- [x] Consider business name analysis for coffee-specific keywords
 
-### 2. Minimum Rating Threshold ⭐
-- [ ] Only show coffee shops with minimum 100 Yelp reviews
-- [ ] This ensures more reliable ratings and established businesses
-- [ ] Update search parameters to prioritize well-reviewed shops
-- [ ] Add review count display in the UI
+### 2. Minimum Rating Threshold ⭐ ✅ COMPLETED
+- [x] Only show coffee shops with minimum 80 Yelp reviews
+- [x] This ensures more reliable ratings and established businesses
+- [x] Update search parameters to prioritize well-reviewed shops
+- [x] Add review count display in the UI
 
-### 3. Replace Signature Drink with NLP Review Summary 📝
-- [ ] Remove signature drink analyzer (currently too generic)
-- [ ] Implement NLP analysis of Yelp reviews to generate shop summaries
-- [ ] Show top 5 coffee shops by rating in sidebar by default
-- [ ] Create intelligent summaries like: "Known for their artisanal pour-over coffee and friendly baristas. Popular for morning meetings and laptop work. Signature drinks include their house blend and seasonal specials."
+### 3. Replace Signature Drink with NLP Review Summary 📝 ✅ COMPLETED
+- [x] Remove signature drink analyzer (currently too generic)
+- [x] Implement NLP analysis of Yelp reviews to generate shop summaries
+- [x] Show top 3 coffee shops by rating in sidebar by default
+- [x] Create intelligent summaries with proper sentence separation
 
 ### 4. Aesthetic Improvements 🎨
 - [ ] Improve map styling and marker design
@@ -141,6 +141,20 @@ Try these zip codes to test the app:
 - [ ] Add loading states and better error handling
 - [ ] Improve color scheme and overall visual appeal
 - [ ] Add coffee-themed icons and graphics
+- [ ] **Highlight top 3 shops in different color** 🎨
+
+### 5. Enhanced API Integration 🔌
+- [ ] Integrate other APIs for more details than Yelp can provide
+- [ ] Research value propositions over existing Yelp (no sponsored results)
+- [ ] Consider Google Places API, Foursquare, or other business data sources
+- [ ] Evaluate cost-benefit of additional API integrations
+
+### 6. Improved Location Search 📍
+- [ ] Fix location geocoding - prevent "Kailua" from going to "Kailua-Kona" on Big Island
+- [ ] Add dropdown of suggested location results as user types
+- [ ] Implement location autocomplete with proper disambiguation
+- [ ] Prioritize local results over distant matches
+- [ ] Add state/city context to improve geocoding accuracy
 
 ## Contributing
 
