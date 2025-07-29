@@ -3,14 +3,16 @@ import json
 import os
 from dotenv import load_dotenv
 from services.yelp_service import YelpCoffeeShopService
+from services.nlp_summary_service import NLPSummaryService
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 
-# Initialize Yelp service
+# Initialize services
 yelp_service = YelpCoffeeShopService()
+nlp_service = NLPSummaryService()
 
 @app.route('/')
 def index():
@@ -20,7 +22,7 @@ def index():
 @app.route('/api/coffee-shops')
 def get_coffee_shops():
     """API endpoint to get coffee shops data dynamically"""
-    zip_code = request.args.get('zip_code', '')
+    location_query = request.args.get('zip_code', '')  # Now handles both zip codes and location names
     lat = request.args.get('lat', type=float)
     lng = request.args.get('lng', type=float)
     radius_miles = request.args.get('radius', 5, type=int)
@@ -30,9 +32,9 @@ def get_coffee_shops():
     if lat and lng:
         # Search by coordinates
         shops = yelp_service.get_coffee_shops_by_location(lat, lng, radius_miles)
-    elif zip_code:
-        # Search by zip code
-        shops = yelp_service.get_coffee_shops_by_zip(zip_code, radius_miles)
+    elif location_query:
+        # Try to interpret as zip code or location name
+        shops = yelp_service.get_coffee_shops_by_location_query(location_query, radius_miles)
     else:
         # Default to Honolulu area if no location specified
         shops = yelp_service.get_coffee_shops_by_location(21.3069, -157.8583, radius_miles)
@@ -41,13 +43,18 @@ def get_coffee_shops():
     if min_rating > 0:
         shops = [shop for shop in shops if shop.get('rating', 0) >= min_rating]
     
+    # Generate top shops with NLP summaries
+    top_shops_data = nlp_service.generate_top_shops_summary(shops, top_count=3)
+    
     return jsonify({
-        'zip_code': zip_code,
+        'location_query': location_query,
         'lat': lat,
         'lng': lng,
         'radius_miles': radius_miles,
         'min_rating': min_rating,
-        'coffee_shops': shops,
+        'coffee_shops': shops,  # All shops for map markers
+        'top_shops': top_shops_data['top_shops'],  # Top 3 with summaries
+        'all_shops_count': top_shops_data['all_shops_count'],
         'total_count': len(shops)
     })
 

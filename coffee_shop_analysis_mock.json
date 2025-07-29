@@ -1,0 +1,303 @@
+{
+  "shops": [
+    {
+      "id": "kakaako-cafe-honolulu",
+      "name": "Kaka'ako Cafe",
+      "categories": [
+        {
+          "alias": "cafes",
+          "title": "Cafes"
+        },
+        {
+          "alias": "coffee",
+          "title": "Coffee & Tea"
+        }
+      ],
+      "rating": 4.5,
+      "review_count": 127,
+      "price": "$$",
+      "location": {
+        "address1": "675 Auahi St",
+        "city": "Honolulu",
+        "state": "HI",
+        "zip_code": "96813"
+      }
+    },
+    {
+      "id": "cafe-villamor-honolulu",
+      "name": "Cafe Villamor",
+      "categories": [
+        {
+          "alias": "cafes",
+          "title": "Cafes"
+        },
+        {
+          "alias": "coffee",
+          "title": "Coffee & Tea"
+        }
+      ],
+      "rating": 4.3,
+      "review_count": 89,
+      "price": "$$",
+      "location": {
+        "address1": "1001 Bishop St",
+        "city": "Honolulu",
+        "state": "HI",
+        "zip_code": "96813"
+      }
+    },
+    {
+      "id": "try-coffee-honolulu",
+      "name": "Try Coffee",
+      "categories": [
+        {
+          "alias": "coffee",
+          "title": "Coffee & Tea"
+        },
+        {
+          "alias": "coffeeroasteries",
+          "title": "Coffee Roasteries"
+        }
+      ],
+      "rating": 4.7,
+      "review_count": 156,
+      "price": "$$",
+      "location": {
+        "address1": "675 Auahi St",
+        "city": "Honolulu",
+        "state": "HI",
+        "zip_code": "96813"
+      }
+    },
+    {
+      "id": "island-brew-coffeehouse-honolulu",
+      "name": "Island Brew Coffeehouse",
+      "categories": [
+        {
+          "alias": "coffee",
+          "title": "Coffee & Tea"
+        },
+        {
+          "alias": "cafes",
+          "title": "Cafes"
+        }
+      ],
+      "rating": 4.4,
+      "review_count": 203,
+      "price": "$$",
+      "location": {
+        "address1": "1288 Ala Moana Blvd",
+        "city": "Honolulu",
+        "state": "HI",
+        "zip_code": "96814"
+      }
+    },
+    {
+      "id": "alii-coffee-co-honolulu",
+      "name": "Ali'i Coffee Co",
+      "categories": [
+        {
+          "alias": "coffee",
+          "title": "Coffee & Tea"
+        },
+        {
+          "alias": "coffeeroasteries",
+          "title": "Coffee Roasteries"
+        }
+      ],
+      "rating": 4.6,
+      "review_count": 178,
+      "price": "$$",
+      "location": {
+        "address1": "1001 Bishop St",
+        "city": "Honolulu",
+        "state": "HI",
+        "zip_code": "96813"
+      }
+    },
+    {
+      "id": "downtown-coffee-honolulu",
+      "name": "Downtown Coffee Honolulu",
+      "categories": [
+        {
+          "alias": "coffee",
+          "title": "Coffee & Tea"
+        },
+        {
+          "alias": "cafes",
+          "title": "Cafes"
+        }
+      ],
+      "rating": 4.2,
+      "review_count": 95,
+      "price": "$$",
+      "location": {
+        "address1": "Fort Street Mall",
+        "city": "Honolulu",
+        "state": "HI",
+        "zip_code": "96813"
+      }
+    },
+    {
+      "id": "drip-studio-hnl-honolulu",
+      "name": "Drip Studio HNL Speciality Coffee",
+      "categories": [
+        {
+          "alias": "coffee",
+          "title": "Coffee & Tea"
+        },
+        {
+          "alias": "coffeeroasteries",
+          "title": "Coffee Roasteries"
+        }
+      ],
+      "rating": 4.8,
+      "review_count": 234,
+      "price": "$$$",
+      "location": {
+        "address1": "675 Auahi St",
+        "city": "Honolulu",
+        "state": "HI",
+        "zip_code": "96813"
+      }
+    }
+  ],
+  "analysis": {
+    "categories": [
+      "coffee",
+      "cafes",
+      "coffeeroasteries"
+    ],
+    "business_names": [
+      "Kaka'ako Cafe",
+      "Cafe Villamor",
+      "Try Coffee",
+      "Island Brew Coffeehouse",
+      "Ali'i Coffee Co",
+      "Downtown Coffee Honolulu",
+      "Drip Studio HNL Speciality Coffee"
+    ],
+    "review_counts": [
+      127,
+      89,
+      156,
+      203,
+      178,
+      95,
+      234
+    ],
+    "ratings": [
+      4.5,
+      4.3,
+      4.7,
+      4.4,
+      4.6,
+      4.2,
+      4.8
+    ],
+    "price_levels": [
+      "$$$",
+      "$$"
+    ],
+    "common_keywords": [
+      "drip",
+      "coffee",
+      "speciality",
+      "brew",
+      "cafe"
+    ],
+    "category_titles": [
+      "Cafes",
+      "Coffee Roasteries",
+      "Coffee & Tea"
+    ]
+  },
+  "suggestions": {
+    "category_filters": [],
+    "name_keywords": [
+      "drip",
+      "coffee",
+      "speciality",
+      "brew",
+      "cafe"
+    ],
+    "min_review_count": 89,
+    "min_rating": 4.2,
+    "excluded_categories": [
+      "restaurants",
+      "bakeries",
+      "breakfast_brunch",
+      "sandwiches",
+      "pizza",
+      "burgers"
+    ],
+    "priority_categories": [
+      "coffee",
+      "cafes",
+      "coffeeroasteries"
+    ],
+    "name_patterns": [
+      "coffee",
+      "cafe",
+      "brew",
+      "drip",
+      "roast",
+      "espresso",
+      "latte",
+      "speciality",
+      "specialty",
+      "artisan",
+      "roastery"
+    ],
+    "business_type_indicators": [
+      "coffee_roasteries",
+      "coffee",
+      "cafes"
+    ]
+  },
+  "improved_logic": {
+    "primary_categories": [
+      "coffee",
+      "coffeeroasteries",
+      "cafes"
+    ],
+    "excluded_categories": [
+      "restaurants",
+      "bakeries",
+      "breakfast_brunch",
+      "sandwiches",
+      "pizza",
+      "burgers",
+      "food"
+    ],
+    "name_keywords": [
+      "coffee",
+      "cafe",
+      "brew",
+      "drip",
+      "roast",
+      "espresso",
+      "latte",
+      "speciality",
+      "specialty"
+    ],
+    "min_review_count": 89,
+    "min_rating": 4.2,
+    "price_range": [
+      "$",
+      "$$",
+      "$$$"
+    ],
+    "business_name_patterns": [
+      "\\bcoffee\\b",
+      "\\bcafe\\b",
+      "\\bbrew\\b",
+      "\\bdrip\\b",
+      "\\broast\\b",
+      "\\bespresso\\b",
+      "\\blatte\\b",
+      "\\bspeciality\\b",
+      "\\bspecialty\\b"
+    ]
+  }
+}

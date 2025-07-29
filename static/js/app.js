@@ -34,11 +34,21 @@ function initializeMap() {
 async function loadCoffeeShops() {
     try {
         const zipCode = document.getElementById('zipCode').value;
-        console.log('Loading coffee shops for zip code:', zipCode);
+        const radius = document.getElementById('searchRadius').value;
+        console.log('Loading coffee shops for zip code:', zipCode, 'with radius:', radius, 'miles');
         
         let url = `/api/coffee-shops`;
+        const params = new URLSearchParams();
+        
         if (zipCode && zipCode.trim() !== '') {
-            url += `?zip_code=${zipCode}`;
+            params.append('zip_code', zipCode);
+        }
+        if (radius) {
+            params.append('radius', radius);
+        }
+        
+        if (params.toString()) {
+            url += `?${params.toString()}`;
         }
         
         const response = await fetch(url);
@@ -46,6 +56,7 @@ async function loadCoffeeShops() {
         
         console.log('API response:', data);
         console.log('Coffee shops found:', data.coffee_shops ? data.coffee_shops.length : 0);
+        console.log('Top shops:', data.top_shops ? data.top_shops.length : 0);
         
         coffeeShops = data.coffee_shops || [];
         
@@ -58,7 +69,8 @@ async function loadCoffeeShops() {
             console.log('All shops loaded:', coffeeShops.length);
         }
         
-        displayCoffeeShops();
+        displayTopShops(data.top_shops || []);
+        displayAllShopsSection(data.all_shops_count || 0);
         addMarkersToMap();
         
         // Center map on the search results
@@ -70,21 +82,46 @@ async function loadCoffeeShops() {
     }
 }
 
-// Display coffee shops in the sidebar
-function displayCoffeeShops() {
-    const container = document.getElementById('coffeeShopsList');
+// Display top 3 coffee shops with NLP summaries
+function displayTopShops(topShops) {
+    const container = document.getElementById('topShopsList');
     container.innerHTML = '';
     
-    coffeeShops.forEach(shop => {
-        const shopCard = createShopCard(shop);
+    if (topShops.length === 0) {
+        container.innerHTML = '<p class="text-muted">No coffee shops found in this area.</p>';
+        return;
+    }
+    
+    topShops.forEach((shop, index) => {
+        const shopCard = createTopShopCard(shop, index + 1);
         container.appendChild(shopCard);
     });
 }
 
-// Create a coffee shop card
-function createShopCard(shop) {
+// Display all shops section with dropdown
+function displayAllShopsSection(allShopsCount) {
+    const container = document.getElementById('allShopsSection');
+    
+    if (allShopsCount <= 3) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    container.innerHTML = `
+        <button class="all-shops-toggle" onclick="toggleAllShops()">
+            Show all remaining coffee shops
+            <span class="toggle-icon">▼</span>
+        </button>
+        <div class="all-shops-list" id="allShopsList">
+            <!-- All shops will be loaded here when expanded -->
+        </div>
+    `;
+}
+
+// Create a top coffee shop card with NLP summary
+function createTopShopCard(shop, rank) {
     const card = document.createElement('div');
-    card.className = 'coffee-shop-card';
+    card.className = 'coffee-shop-card top-shops-section';
     card.onclick = () => selectShop(shop);
     
     const stars = '★'.repeat(Math.floor(shop.rating)) + '☆'.repeat(5 - Math.floor(shop.rating));
@@ -92,18 +129,70 @@ function createShopCard(shop) {
     card.innerHTML = `
         <div class="d-flex justify-content-between align-items-start">
             <div class="flex-grow-1">
-                <div class="shop-name">${shop.name}</div>
+                <div class="shop-name">
+                    <span class="badge bg-primary me-2">#${rank}</span>
+                    ${shop.name}
+                </div>
                 <div class="shop-address">${shop.address}</div>
-                <div class="rating-stars">${stars} (${shop.rating})</div>
+                <div class="rating-stars">${stars} (${shop.rating}) • ${shop.review_count} reviews</div>
             </div>
-            <div class="signature-drink">${shop.signature_drink}</div>
+        </div>
+        <div class="nlp-summary">
+            ${shop.nlp_summary || 'A coffee shop with great reviews.'}
         </div>
         <div class="mt-2">
-            <small class="text-muted">${shop.description}</small>
+            <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); openShopLink('${shop.yelp_url || ''}')">
+                View Yelp Page
+            </button>
         </div>
     `;
     
     return card;
+}
+
+// Create a simple shop item for the all shops list
+function createShopItem(shop) {
+    const item = document.createElement('div');
+    item.className = 'all-shop-item';
+    item.onclick = () => selectShop(shop);
+    
+    const stars = '★'.repeat(Math.floor(shop.rating)) + '☆'.repeat(5 - Math.floor(shop.rating));
+    
+    item.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <div class="shop-name">${shop.name}</div>
+                <div class="rating-stars">${stars} (${shop.rating})</div>
+            </div>
+            <small class="text-muted">${shop.review_count} reviews</small>
+        </div>
+    `;
+    
+    return item;
+}
+
+// Toggle the all shops dropdown
+function toggleAllShops() {
+    const toggle = document.querySelector('.all-shops-toggle');
+    const list = document.getElementById('allShopsList');
+    
+    if (list.classList.contains('show')) {
+        // Collapse
+        list.classList.remove('show');
+        toggle.classList.remove('expanded');
+        list.innerHTML = '';
+    } else {
+        // Expand
+        list.classList.add('show');
+        toggle.classList.add('expanded');
+        
+        // Load all shops (excluding top 3)
+        const allShops = coffeeShops.slice(3);
+        allShops.forEach(shop => {
+            const shopItem = createShopItem(shop);
+            list.appendChild(shopItem);
+        });
+    }
 }
 
 // Add markers to the map
@@ -118,11 +207,10 @@ function addMarkersToMap() {
             .bindPopup(`
                 <div style="min-width: 200px;">
                     <h6>${shop.name}</h6>
-                    <p><strong>Signature Drink:</strong> ${shop.signature_drink}</p>
-                    <p><strong>Rating:</strong> ${shop.rating} ⭐</p>
+                    <p><strong>Rating:</strong> ${shop.rating} ⭐ (${shop.review_count} reviews)</p>
                     <p><small>${shop.address}</small></p>
-                    <button class="btn btn-sm btn-primary" onclick="showShopDetails(${shop.id})">
-                        View Details
+                    <button class="btn btn-sm btn-primary" onclick="openShopLink('${shop.yelp_url || ''}')">
+                        ${shop.yelp_url ? 'View Yelp Page' : 'No Link'}
                     </button>
                 </div>
             `);
@@ -172,23 +260,9 @@ function selectShop(shop) {
     selectedShop = shop;
 }
 
-// Show shop details in modal
+// Show shop details in modal (legacy function - now using direct links)
 async function showShopDetails(shopId) {
-    try {
-        const response = await fetch(`/api/coffee-shop/${shopId}`);
-        const shop = await response.json();
-        
-        if (shop.error) {
-            showError('Shop details not found');
-            return;
-        }
-        
-        displayShopModal(shop);
-        
-    } catch (error) {
-        console.error('Error loading shop details:', error);
-        showError('Failed to load shop details');
-    }
+    console.log('showShopDetails is deprecated - using direct links instead');
 }
 
 // Display shop details in modal
@@ -207,13 +281,14 @@ function displayShopModal(shop) {
                 <h6>Basic Information</h6>
                 <p><strong>Address:</strong> ${shop.address}</p>
                 <p><strong>Rating:</strong> ${stars} (${shop.rating})</p>
+                <p><strong>Review Count:</strong> ${shop.review_count}</p>
                 <p><strong>Hours:</strong> ${shop.hours}</p>
                 <p><strong>Phone:</strong> ${shop.phone}</p>
                 <p><strong>Website:</strong> <a href="${shop.website}" target="_blank">${shop.website}</a></p>
             </div>
             <div class="col-md-6">
-                <h6>Signature Drink</h6>
-                <div class="signature-drink">${shop.signature_drink}</div>
+                <h6>Summary</h6>
+                <div class="nlp-summary">${shop.nlp_summary || 'A coffee shop with great reviews.'}</div>
                 <p class="mt-2"><strong>Description:</strong> ${shop.description}</p>
             </div>
         </div>
@@ -222,13 +297,13 @@ function displayShopModal(shop) {
         
         <h6>Reviews</h6>
         <div id="reviewsContainer">
-            ${shop.reviews.map(review => `
+            ${shop.reviews ? shop.reviews.map(review => `
                 <div class="review-item">
                     <div class="review-user">${review.user}</div>
                     <div class="rating-stars">${'★'.repeat(review.rating)}</div>
                     <div class="review-comment">"${review.comment}"</div>
                 </div>
-            `).join('')}
+            `).join('') : '<p class="text-muted">No reviews available.</p>'}
         </div>
     `;
     
@@ -243,30 +318,25 @@ function searchCoffeeShops() {
 // Filter shops by rating
 function filterShops() {
     const showOnlyRated = document.getElementById('showOnlyRated').checked;
-    const container = document.getElementById('coffeeShopsList');
     
     if (showOnlyRated) {
         const filteredShops = coffeeShops.filter(shop => shop.rating >= 4.5);
-        displayFilteredShops(filteredShops);
+        const topShopsData = { top_shops: filteredShops.slice(0, 3), all_shops_count: filteredShops.length };
+        displayTopShops(topShopsData.top_shops);
+        displayAllShopsSection(topShopsData.all_shops_count);
     } else {
-        displayCoffeeShops();
+        // Reload the original data
+        loadCoffeeShops();
     }
 }
 
-// Display filtered shops
-function displayFilteredShops(shops) {
-    const container = document.getElementById('coffeeShopsList');
-    container.innerHTML = '';
-    
-    if (shops.length === 0) {
-        container.innerHTML = '<p class="text-muted">No highly rated coffee shops found.</p>';
-        return;
+// Open shop website or Yelp page
+function openShopLink(url) {
+    if (url && url.trim() !== '') {
+        window.open(url, '_blank');
+    } else {
+        showError('No website or Yelp page available for this coffee shop.');
     }
-    
-    shops.forEach(shop => {
-        const shopCard = createShopCard(shop);
-        container.appendChild(shopCard);
-    });
 }
 
 // Show error message
